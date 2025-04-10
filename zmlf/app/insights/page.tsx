@@ -10,7 +10,6 @@ const emojis = [
   '🧘‍♂️', '📚', '🧾', '⚙️', '🩺', '🧍‍♂️', '🚰', '🌙'
 ];
 
-
 export default function InsightsPage() {
   const [isClient, setIsClient] = useState(false);
   const [currentEmojiIndex, setCurrentEmojiIndex] = useState(0);
@@ -19,6 +18,7 @@ export default function InsightsPage() {
   const [trendImage, setTrendImage] = useState('');
   const [chatOpen, setChatOpen] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [loading, setLoading] = useState(false); // NEW
 
   useEffect(() => {
     setIsClient(true);
@@ -42,6 +42,9 @@ export default function InsightsPage() {
 
     const form = new FormData();
     form.append('file', selectedFile);
+    setLoading(true);
+    setInsight('');
+    setTrendImage('');
 
     try {
       const res = await fetch('https://zmlb.onrender.com/upload-csv/', {
@@ -63,6 +66,8 @@ export default function InsightsPage() {
     } catch (err) {
       console.error('❌ Error uploading file:', err);
       setInsight("❌ Failed to generate insights.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -102,7 +107,6 @@ export default function InsightsPage() {
                 <br /><br />
                 📊 Visual Dashboard — Trend charts for sleep/hydration/mood.
                 <br /><br />
-
                 📂 Upload a CSV (date, sleep_hours, mood, steps, hydration_ml) 
               </p>
             </div>
@@ -120,6 +124,13 @@ export default function InsightsPage() {
                 Submit
               </button>
             </div>
+
+            {loading && (
+              <div className="flex flex-col items-center justify-center gap-2 mt-4">
+                <div className="animate-pulse text-3xl">🔄</div>
+                <p className="text-sm text-gray-600">Generating trends and insights... please wait.</p>
+              </div>
+            )}
 
             {insight && (
               <div className="w-full mt-4 bg-gray-100 p-4 rounded shadow max-h-72 overflow-auto">
