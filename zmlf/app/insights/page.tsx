@@ -44,7 +44,7 @@ export default function InsightsPage() {
     form.append('file', selectedFile);
 
     try {
-      const res = await fetch('https://zmlbchatbot.onrender.com/upload-csv/', {
+      const res = await fetch('https://zmlb.onrender.com/upload-csv/', {
         method: 'POST',
         body: form
       });
